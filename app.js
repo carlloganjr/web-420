@@ -14,6 +14,7 @@ const swaggerUI = require('swagger-ui-express');
 const swaggerJS = require('swagger-jsdoc');
 const mongoose = require('mongoose');
 const composersAPI = require('./routes/Logan-composer-routes');
+const personsAPI = require('./routes/Logan-person-routes');
 
 const app = express();
 // set the port
@@ -49,8 +50,10 @@ const options = {
 
 const openapiSpecification = swaggerJS(options);
 
+// included routes
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openapiSpecification));
 app.use('/api', composersAPI);
+app.use('/api', personsAPI);
 
 http.createServer(app)
 .listen(PORT, (e) => {
