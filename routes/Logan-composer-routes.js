@@ -187,5 +187,160 @@ router.post('/composers', async(req, res) => {
   }
 });
 
+// openapi language used to describe the API via swagger
+/** 
+ * @openapi
+ * /api/composers/{id}:
+ *   put:
+ *     tags:
+ *       - Composers
+ *     operationId: updateComposerById
+ *     description: Update a composer by Id.
+ *     summary: Update a composer document.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       description: Update a new composer document
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *       required: true
+ *     responses:
+ *       '200':
+ *         description: Update a composer document.
+ *         content:
+ *           application/json:
+ *             schema: 
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 firstName:
+ *                   type: string
+ *                 lastName:
+ *                   type: string
+ *       '401':
+ *         description: Invalid composer id.
+ *       '500':
+ *         description: Server expectations.
+ *       '501': 
+ *         description: MongoDB expectations.
+ */
+// route for updateComposerById method
+router.put('/composers/:id', async(req, res) => {
+  try {
+    // request the id 
+    let composerId = req.params.id;
+    // find a composer using the provided id
+    Composer.findOne({_id: composerId}, (e, composer) => {
+      // if the composer exists
+      if(composer) {
+        // some database error
+        if(e) {
+          console.log(e);
+          res.status(501).send({
+            'message': `MongoDB Exception: ${e}`
+          });
+        }
+        // successfully found
+        else {
+          res.status(200).send({
+            'message': 'Composer updated.'
+          });
+          // set new information in the document
+          composer.set({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+          });
+          // write to the document
+          composer.save((e, updatedComposer) => {
+            if(e) {
+              console.log(e);
+              res.json(updatedComposer);
+            }
+            else {
+              res.json(updatedComposer);
+            }
+          });
+        }
+      }
+      if(!composer) {
+        // send the 401 message
+        res.status(401).send({
+          'message': 'Invalid composer id.'
+        });
+      }
+    });
+  }
+  catch(e) {
+    console.log(e);
+    res.status(500).send({
+      'message': `Server Exception: ${e.message}`
+    });
+  }
+});
+
+// openapi language used to describe the API via swagger
+/** 
+ * @openapi
+ * /api/composers/{id}:
+ *   delete:
+ *     tags:
+ *       - Composers
+ *     operationId: deleteComposerById
+ *     description: Delete a composer by Id.
+ *     summary: Delete a composer document.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       '200':
+ *         description: Deleted composer document.
+ *       '500':
+ *         description: Server expectations.
+ *       '501': 
+ *         description: MongoDB expectations.
+ */
+// route for deleteComposerById method
+router.delete('/composers/:id', (req, res) => {
+  try {
+    // request id
+    let composerId = req.params.id;
+    // find document using the request id and delete
+    Composer.findByIdAndDelete({_id: composerId}, (e, composer) => {
+        if (e) {
+            console.log(e);
+            res.status(501).send({
+                'message': `MongoDB Exception: ${e}`
+            });
+        } 
+        // if no errors occur respond with successful deletion
+        else if(composer) {
+          res.status(200).send({
+            'message': 'Deleted composer document.'
+          });
+        }
+    });
+  } catch(e) {
+      console.log(e);
+      res.status(500).send({
+          'message': `Server Exception: ${e.message}`
+      });
+  }
+})
+
 // export the module for external use
 module.exports = router;
