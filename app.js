@@ -61,8 +61,9 @@ app.use('/api', sessionAPI);
 app.use('/api', customerAPI);
 app.use('/api', teamsAPI);
 
+// additional route for render
 app.get("*", (req, res) => {
-	res.redirect("https://logan-web-420-capstone.onrender.com/api-docs");
+	res.redirect("logan-web-420-capstone.onrender.com/");
 });
 
 http.createServer(app)
