@@ -61,6 +61,9 @@ app.use('/api', sessionAPI);
 app.use('/api', customerAPI);
 app.use('/api', teamsAPI);
 
+app.get("*", (req, res) => {
+	res.redirect("https://logan-web-420-capstone.onrender.com/api-docs");
+});
 
 http.createServer(app)
 .listen(PORT, (e) => {
