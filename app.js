@@ -17,6 +17,7 @@ const composersAPI = require('./routes/Logan-composer-routes');
 const personsAPI = require('./routes/Logan-person-routes');
 const sessionAPI = require('./routes/Logan-session-routes');
 const customerAPI = require('./routes/Logan-node-shopper-routes');
+const teamsAPI = require('./routes/Logan-teams-routes');
 
 const app = express();
 // set the port
@@ -58,6 +59,8 @@ app.use('/api', composersAPI);
 app.use('/api', personsAPI);
 app.use('/api', sessionAPI);
 app.use('/api', customerAPI);
+app.use('/api', teamsAPI);
+
 
 http.createServer(app)
 .listen(PORT, (e) => {
